@@ -2,6 +2,7 @@ import React from 'react'
 import { hot } from 'react-hot-loader/root'
 import './App.css'
 import Addtodo from './component/Addtodo'
+import Todo from './component/Todo'
 
 class App extends React.Component {
   constructor (props) {
@@ -38,13 +39,16 @@ class App extends React.Component {
   render () {
     return (
       <div className='App'>
-        <h1> Hello, World! </h1>
         <form onSubmit={this.handleSubmit}>
+          <label htmlFor='addtodo'>Add todo:</label>
           <Addtodo
             value={this.state.value}
             onChange={this.handleChange}
           />
         </form>
+        <ol type='I' id='display'>
+          {this.state.todos.map(x => <Todo todo={x} key={x.key} />)}
+        </ol>
       </div>
     )
   }
