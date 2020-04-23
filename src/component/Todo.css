@@ -3,3 +3,14 @@ li {
   font-size: 1.1rem;
   font-weight: 500;
 }
+/*  modal is displayed while any element inside parent is focused,
+  now actions inside modal can be triggered before modal closes   */
+li:focus-within .modal {
+  display: inline;
+}
+p {
+  display: inline-block;
+}
+.todoDone {
+  text-decoration: line-through;
+}

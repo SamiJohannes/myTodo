@@ -13,6 +13,7 @@ class App extends React.Component {
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   handleChange (e) {
@@ -22,18 +23,39 @@ class App extends React.Component {
   }
 
   handleSubmit (e) {
-    const todo =
-      {
-        todo: this.state.value,
-        isDone: false,
-        key: new Date().toLocaleString()
-      }
-    const newTodos = [...this.state.todos, todo]
     e.preventDefault()
+    // after input submit, value is added to todos array in state object
     this.setState({
       value: '',
-      todos: newTodos
+      todos: [
+        ...this.state.todos,
+        {
+          todo: this.state.value,
+          isDone: false,
+          key: new Date().toLocaleString()
+        }
+      ]
     })
+  }
+
+  handleClick (e, index) {
+    if (e.target.name === 'done') {
+      const updateTodos = this.state.todos.map((x, i) => {
+        if (i === index) {
+          return {
+            todo: x.todo,
+            isDone: !x.isDone,
+            key: x.key
+          }
+        } else {
+          return x
+        }
+      })
+      e.target.blur()
+      this.setState({
+        todos: updateTodos
+      })
+    }
   }
 
   render () {
@@ -47,7 +69,13 @@ class App extends React.Component {
           />
         </form>
         <ol type='I' id='display'>
-          {this.state.todos.map(x => <Todo todo={x} key={x.key} />)}
+          {this.state.todos.map((x, index) =>
+            <Todo
+              todo={x}
+              onFocus={this.handleFocus}
+              key={x.key}
+              onClick={(e) => this.handleClick(e, index)}
+            />)}
         </ol>
       </div>
     )
