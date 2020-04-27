@@ -42,18 +42,24 @@ class App extends React.Component {
   }
 
   handleClick (e, index) {
-    if (e.target.name === 'done') {
+    // handles todo actions, 1. matches selected todo with todos list 2. changes data according user input
+    if (e.target.name === 'done' || e.target.name === 'del') {
       const updateTodos = this.state.todos.map((x, i) => {
-        if (i === index) {
+        // mark selected todo as done
+        if (i === index && e.target.name === 'done') {
           return {
             todo: x.todo,
             isDone: !x.isDone,
             key: x.key
           }
+          // delete selected todo
+        } else if (i === index && e.target.name === 'del') {
+          return null
         } else {
           return x
         }
-      })
+        // filter null value off the array
+      }).filter(x => x)
       e.target.blur()
       this.setState({
         todos: updateTodos
