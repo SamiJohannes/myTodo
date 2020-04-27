@@ -10,6 +10,7 @@ li:focus-within .modal {
 }
 p {
   display: inline-block;
+  margin: 0.1rem 0.2rem;
 }
 .todoDone {
   text-decoration: line-through;

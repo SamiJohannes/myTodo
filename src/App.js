@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader/root'
 import './App.css'
 import Addtodo from './component/Addtodo'
 import Todo from './component/Todo'
+import ActionBar from './component/ActionBar'
 
 class App extends React.Component {
   constructor (props) {
@@ -59,6 +60,14 @@ class App extends React.Component {
   }
 
   render () {
+    // keeps track the amount of active todos
+    const count = this.state.todos.reduce((count, todo) => {
+      if (!todo.isDone) {
+        return ++count
+      } else {
+        return count
+      }
+    }, 0)
     return (
       <div className='App'>
         <form onSubmit={this.handleSubmit}>
@@ -68,6 +77,7 @@ class App extends React.Component {
             onChange={this.handleChange}
           />
         </form>
+        <ActionBar count={count} />
         <ol type='I' id='display'>
           {this.state.todos.map((x, index) =>
             <Todo

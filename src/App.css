@@ -1,9 +1,14 @@
 .App {
   margin: 1rem;
   font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
 }
 
 ol {
   margin: 0.75rem;
   padding-left: 0.5rem;
+}
+
+div {
+  margin-top: 1rem;
 }
