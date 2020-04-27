@@ -73,6 +73,11 @@ class App extends React.Component {
           ? this.setState({ display: 'complete' })
           : this.setState({ display: 'all' })
     }
+    // handle delete all
+    if (e.target.name === 'delete all done') {
+      const filterTodos = this.state.todos.filter(x => !x.isDone)
+      this.setState({ todos: filterTodos })
+    }
   }
 
   render () {
@@ -93,6 +98,8 @@ class App extends React.Component {
         onClick={(e) => this.handleClick(e, index)}
       />
     )
+    // checks if any todo is done
+    const todosDone = this.state.todos.filter(x => x.isDone)
     return (
       <div className='App'>
         <form onSubmit={this.handleSubmit}>
@@ -104,6 +111,8 @@ class App extends React.Component {
         </form>
         <ActionBar count={count}>
           {'Filter todos: '}<Button name={this.state.display} onClick={this.handleClick} />
+          {/* display delete all done button, if any there is any completed todos */}
+          {todosDone.length ? <Button name='delete all done' onClick={this.handleClick} /> : null}
         </ActionBar>
         <ol type='I' id='display'>
           {/* filters todos according user selection */}
