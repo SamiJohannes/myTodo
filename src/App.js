@@ -4,13 +4,15 @@ import './App.css'
 import Addtodo from './component/Addtodo'
 import Todo from './component/Todo'
 import ActionBar from './component/ActionBar'
+import Button from './component/Button'
 
 class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       value: '',
-      todos: []
+      todos: [],
+      display: 'all'
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -57,6 +59,14 @@ class App extends React.Component {
         todos: updateTodos
       })
     }
+    // handles filter button click event
+    if (e.target.name === 'all' || e.target.name === 'complete' || e.target.name === 'active') {
+      e.target.name === 'all'
+        ? this.setState({ display: 'active' })
+        : e.target.name === 'active'
+          ? this.setState({ display: 'complete' })
+          : this.setState({ display: 'all' })
+    }
   }
 
   render () {
@@ -68,6 +78,15 @@ class App extends React.Component {
         return count
       }
     }, 0)
+    // todo template, iterate state todos
+    const displayTodo = this.state.todos.map((x, index) =>
+      <Todo
+        todo={x}
+        onFocus={this.handleFocus}
+        key={x.key}
+        onClick={(e) => this.handleClick(e, index)}
+      />
+    )
     return (
       <div className='App'>
         <form onSubmit={this.handleSubmit}>
@@ -77,15 +96,16 @@ class App extends React.Component {
             onChange={this.handleChange}
           />
         </form>
-        <ActionBar count={count} />
+        <ActionBar count={count}>
+          {'Filter todos: '}<Button name={this.state.display} onClick={this.handleClick} />
+        </ActionBar>
         <ol type='I' id='display'>
-          {this.state.todos.map((x, index) =>
-            <Todo
-              todo={x}
-              onFocus={this.handleFocus}
-              key={x.key}
-              onClick={(e) => this.handleClick(e, index)}
-            />)}
+          {/* filters todos according user selection */}
+          {this.state.display === 'all'
+            ? displayTodo
+            : this.state.display === 'active'
+              ? displayTodo.filter(x => x.props.todo.isDone === false)
+              : displayTodo.filter(x => x.props.todo.isDone === true)}
         </ol>
       </div>
     )

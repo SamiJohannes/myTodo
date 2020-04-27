@@ -3,6 +3,6 @@ import './ActionBar.css'
 
 const ActionBar = (props) =>
   <div>
-    {'Active todos: '}{props.count}
+    {'Active todos: '}{props.count}{props.children}
   </div>
 export default ActionBar
