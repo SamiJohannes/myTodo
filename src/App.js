@@ -35,7 +35,8 @@ class App extends React.Component {
         {
           todo: this.state.value,
           isDone: false,
-          key: new Date().toLocaleString()
+          key: new Date().toLocaleString(),
+          allDone: false
         }
       ]
     })
@@ -78,6 +79,25 @@ class App extends React.Component {
       const filterTodos = this.state.todos.filter(x => !x.isDone)
       this.setState({ todos: filterTodos })
     }
+    // handle toggle all
+    if (e.target.name === 'All Done') {
+      const alldone = this.state.todos.map(x => {
+        if (this.state.allDone) {
+          return {
+            todo: x.todo,
+            isDone: false,
+            key: x.key
+          }
+        } else {
+          return {
+            todo: x.todo,
+            isDone: true,
+            key: x.key
+          }
+        }
+      })
+      this.setState({ todos: alldone, allDone: !this.state.allDone })
+    }
   }
 
   render () {
@@ -113,6 +133,7 @@ class App extends React.Component {
           {'Filter todos: '}<Button name={this.state.display} onClick={this.handleClick} />
           {/* display delete all done button, if any there is any completed todos */}
           {todosDone.length ? <Button name='delete all done' onClick={this.handleClick} /> : null}
+          <Button name='All Done' onClick={this.handleClick} />
         </ActionBar>
         <ol type='I' id='display'>
           {/* filters todos according user selection */}
