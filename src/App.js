@@ -12,11 +12,14 @@ class App extends React.Component {
     this.state = {
       value: '',
       todos: [],
-      display: 'all'
+      display: 'all',
+      allDone: true
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleClick = this.handleClick.bind(this)
+    this.handleAllDone = this.handleAllDone.bind(this)
+    this.handleFilter = this.handleFilter.bind(this)
   }
 
   handleChange (e) {
@@ -28,100 +31,70 @@ class App extends React.Component {
   handleSubmit (e) {
     e.preventDefault()
     // after input submit, value is added to todos array in state object
-    this.setState({
+    this.setState(state => ({
       value: '',
       todos: [
-        ...this.state.todos,
+        ...state.todos,
         {
-          todo: this.state.value,
+          todo: state.value,
           isDone: false,
-          key: new Date().toLocaleString(),
-          allDone: false
+          key: new Date().toLocaleString()
         }
       ]
-    })
+    }))
   }
 
   handleClick (e, index) {
-    // handles todo actions, 1. matches selected todo with todos list 2. changes data according user input
-    if (e.target.name === 'done' || e.target.name === 'del') {
-      const updateTodos = this.state.todos.map((x, i) => {
-        // mark selected todo as done
-        if (i === index && e.target.name === 'done') {
-          return {
-            todo: x.todo,
-            isDone: !x.isDone,
-            key: x.key
+    // handles todo actions, 1. marks selected todo as done
+    if (e.target.name === 'done') {
+      this.setState(state => ({
+        todos: state.todos.map((todo, i) => {
+          if (i === index) {
+            return { ...todo, isDone: !todo.isDone }
+          } else {
+            return todo
           }
-          // delete selected todo
-        } else if (i === index && e.target.name === 'del') {
-          return null
-        } else {
-          return x
-        }
-        // filter null value off the array
-      }).filter(x => x)
+        })
+      }))
       e.target.blur()
-      this.setState({
-        todos: updateTodos
-      })
     }
-    // handles filter button click event
-    if (e.target.name === 'all' || e.target.name === 'complete' || e.target.name === 'active') {
-      e.target.name === 'all'
-        ? this.setState({ display: 'active' })
-        : e.target.name === 'active'
-          ? this.setState({ display: 'complete' })
-          : this.setState({ display: 'all' })
-    }
-    // handle delete all
-    if (e.target.name === 'delete all done') {
-      const filterTodos = this.state.todos.filter(x => !x.isDone)
-      this.setState({ todos: filterTodos })
-    }
-    // handle toggle all
-    if (e.target.name === 'All Done') {
-      const alldone = this.state.todos.map(x => {
-        if (this.state.allDone) {
-          return {
-            todo: x.todo,
-            isDone: false,
-            key: x.key
-          }
-        } else {
-          return {
-            todo: x.todo,
-            isDone: true,
-            key: x.key
-          }
-        }
-      })
-      this.setState({ todos: alldone, allDone: !this.state.allDone })
+    // 2. deletes selected todo
+    if (e.target.name === 'del') {
+      this.setState(state => ({
+        todos: state.todos.filter((todo, i) => i !== index)
+      }))
     }
   }
 
+  // displays filtered todos, all/active/completed
+  handleFilter (e) {
+    e.target.name === 'all'
+      ? this.setState({ display: 'active' })
+      : e.target.name === 'active'
+        ? this.setState({ display: 'complete' })
+        : this.setState({ display: 'all' })
+  }
+
+  // handles toggle all todos done/undone
+  handleAllDone () {
+    this.setState(state => ({
+      todos: state.todos.map(todo => ({ ...todo, isDone: state.allDone })),
+      allDone: !state.allDone
+    }))
+  }
+
   render () {
-    // keeps track the amount of active todos
-    const count = this.state.todos.reduce((count, todo) => {
-      if (!todo.isDone) {
-        return ++count
-      } else {
-        return count
-      }
-    }, 0)
     // todo template, iterate state todos
     const displayTodo = this.state.todos.map((x, index) =>
       <Todo
         todo={x}
-        onFocus={this.handleFocus}
         key={x.key}
         onClick={(e) => this.handleClick(e, index)}
       />
     )
-    // checks if any todo is done
-    const todosDone = this.state.todos.filter(x => x.isDone)
     return (
       <div className='App'>
+        {/* input field for user to add todos */}
         <form onSubmit={this.handleSubmit}>
           <label htmlFor='addtodo'>Add todo:</label>
           <Addtodo
@@ -129,12 +102,17 @@ class App extends React.Component {
             onChange={this.handleChange}
           />
         </form>
-        <ActionBar count={count}>
-          {'Filter todos: '}<Button name={this.state.display} onClick={this.handleClick} />
+        {/* container component for general actions and active todo counter */}
+        <ActionBar count={this.state.todos.filter(todo => !todo.isDone).length}>
+          {'Filter todos: '}<Button name={this.state.display} onClick={this.handleFilter} />
+          {/* mark all todos to done/undone */}
+          <Button name='All Done' onClick={this.handleAllDone} />
           {/* display delete all done button, if any there is any completed todos */}
-          {todosDone.length ? <Button name='delete all done' onClick={this.handleClick} /> : null}
-          <Button name='All Done' onClick={this.handleClick} />
+          {this.state.todos.some(todo => todo.isDone) // removes all completed todos
+            ? <Button name='delete all done' onClick={() => this.setState(state => ({ todos: state.todos.filter(x => !x.isDone) }))} />
+            : null}
         </ActionBar>
+        {/* display container for users todos */}
         <ol type='I' id='display'>
           {/* filters todos according user selection */}
           {this.state.display === 'all'
