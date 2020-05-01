@@ -1,7 +1,17 @@
 li {
-  margin: 0.15rem;
+  margin: 0 1rem;
+  padding: 0.2rem 0;
+  margin-bottom: 0.75rem;
+  border-radius: 0.3rem;
   font-size: 1.1rem;
   font-weight: 500;
+  background: #ae99f5;
+  box-shadow: 0.1rem 0.2rem 0.4rem 0.1rem #6d6d6d;
+  transition: transform 0.5s ease-out 0.25s;
+}
+li:focus {
+  background-color: #2ca1f5;
+  transform: scale(1.2, 1.2);
 }
 /*  modal is displayed while any element inside parent is focused,
   now actions inside modal can be triggered before modal closes   */

@@ -96,7 +96,7 @@ class App extends React.Component {
       <div className='App'>
         {/* input field for user to add todos */}
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor='addtodo'>Add todo:</label>
+          <label htmlFor='addtodo'>Add todo: </label>
           <Addtodo
             value={this.state.value}
             onChange={this.handleChange}
@@ -104,7 +104,7 @@ class App extends React.Component {
         </form>
         {/* container component for general actions and active todo counter */}
         <ActionBar count={this.state.todos.filter(todo => !todo.isDone).length}>
-          {'Filter todos: '}<Button name={this.state.display} onClick={this.handleFilter} />
+          <h2>Filter todos: <Button name={this.state.display} onClick={this.handleFilter} /></h2>
           {/* mark all todos to done/undone */}
           <Button name='All Done' onClick={this.handleAllDone} />
           {/* display delete all done button, if any there is any completed todos */}
